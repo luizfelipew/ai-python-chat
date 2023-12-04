@@ -24,7 +24,7 @@ O formato de saída deve ser:
 cliente - descreva o perfil do cliente em 3 palavras
 """
 
-prompt_usuario = carrega("../dados/lista_de_compras_100_clientes.csv")
+prompt_usuario = carrega("../dados/lista_de_compras_10_clientes.csv")
 
 client = OpenAI()
 
