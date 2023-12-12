@@ -1,6 +1,7 @@
 import os
-from openai import OpenAI
+import openai
 import dotenv
+import time
 
 def analise_sentimento(nome_do_produto):
     prompt_sistema = """
@@ -18,27 +19,38 @@ def analise_sentimento(nome_do_produto):
 
     prompt_usuario = carrega(f"../dados/avaliacoes-{nome_do_produto}.txt")
     print(f"Iniciando a análise do produto: {nome_do_produto}")
+    print(openai.__version__)
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
-    client = OpenAI()
+    tentativas = 0
+    while tentativas < 3:
+        tentativas += 1
+        print(f"Tentativa {tentativas}")
+        try:
+            # raise openai.APIError("Erro da API OpenAI", request=None, body="teste")
+            resposta = openai.chat.completions.create(
+                model = "gpt-3.5-turbo",
+                messages = [
+                    {
+                        "role": "system",
+                        "content": prompt_sistema
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt_usuario
+                    }
+                ]
+            )
 
-    resposta = client.chat.completions.create(
-        model = "gpt-3.5-turbo",
-        messages = [
-            {
-                "role": "system",
-                "content": prompt_sistema
-            },
-            {
-                "role": "user",
-                "content": prompt_usuario
-            }
-        ]
-    )
-
-    salva(f"../dados/analise-{nome_do_produto}", resposta.choices[0].message.content)
-    print("Análise concluída com sucesso")
-
-
+            salva(f"../dados/analise-{nome_do_produto}", resposta.choices[0].message.content)
+            print("Análise concluída com sucesso")
+        
+        except openai.AuthenticationError as e:
+            print(f"Erro de autenticação: {e}")
+        except openai.APIError as e:
+            print(f"Erro de API: {e}")
+            time.sleep(5)    
+        
 def carrega(nome_do_arquivo):
     try:
         with open(nome_do_arquivo, "r") as arquivo:
