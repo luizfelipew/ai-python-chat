@@ -19,10 +19,11 @@ def analise_sentimento(nome_do_produto):
 
     prompt_usuario = carrega(f"../dados/avaliacoes-{nome_do_produto}.txt")
     print(f"Iniciando a análise do produto: {nome_do_produto}")
-    print(openai.__version__)
+
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
     tentativas = 0
+    tempo_de_espera = 5
     while tentativas < 3:
         tentativas += 1
         print(f"Tentativa {tentativas}")
@@ -44,12 +45,16 @@ def analise_sentimento(nome_do_produto):
 
             salva(f"../dados/analise-{nome_do_produto}", resposta.choices[0].message.content)
             print("Análise concluída com sucesso")
-        
+            return
         except openai.AuthenticationError as e:
             print(f"Erro de autenticação: {e}")
         except openai.APIError as e:
             print(f"Erro de API: {e}")
-            time.sleep(5)    
+            time.sleep(5)
+        except openai.RateLimitError as e:
+            print(f"Erro de limite de taxa: {e}")
+            time.sleep(tempo_de_espera)
+            tempo_de_espera *= 2
         
 def carrega(nome_do_arquivo):
     try:
@@ -68,6 +73,6 @@ def salva(nome_do_arquivo, conteudo):
 
 dotenv.load_dotenv()
 
-lista_de_produtos = ["Tapete de yoga", "Tabuleiro de xadrez de madeira"]
+lista_de_produtos = ["DVD player automotivo", "Esteira elétrica para fitness", "Grill elétrico para churrasco", "Mixer de sucos e vitaminas", "Tapete de yoga", "Miniatura de carro colecionável", "Balança de cozinha digital", "Jogo de copos e taças de cristal", "Tabuleiro de xadrez de madeira", "Boia inflável para piscina"]
 for nome_do_produto in lista_de_produtos:
     analise_sentimento(nome_do_produto)
