@@ -79,7 +79,33 @@ def recomenda_produtos(perfil, lista_de_produtos):
   )
 
   conteudo = resposta.choices[0].message.content
-  print("2. Finalizando a recomendação de produtos")
+  print("3. Escrevendo e-mail de recomendação")
+  return conteudo
+
+def escreve_email(recomendacoes):
+  print("2. Iniciando a recomendação de produtos")
+  prompt_sistema = f"""
+      Escreva um e-mail recomendando os seguintes produtos para um cliente:
+
+      {recomendacoes}
+
+      O e-mail deve ter no máximo 3 parágrafos.
+      O tom deve ser amigável, informal e descontraído.
+      Trate o cliente como alguém próximo e conhecido.
+    """
+
+  resposta = openai.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+      {
+        "role": "system",
+        "content": prompt_sistema
+      }
+    ]
+  )
+
+  conteudo = resposta.choices[0].message.content
+  print("3. Finalizando a escrita do e-mail")
   return conteudo
 
 dotenv.load_dotenv()
@@ -92,5 +118,5 @@ for cliente in perfis["clientes"]:
     nome_do_cliente = cliente["nome"]
     print(f"Iniciando recomendação para o cliente {nome_do_cliente}")
     recomendacoes = recomenda_produtos(cliente["perfil"], lista_de_produtos)
-    print(recomendacoes)
-    # email = descreve_email(recomendacoes)
+    email = escreve_email(recomendacoes)
+    salva(f"e-mail-{nome_do_cliente}.txt", email)
