@@ -10,6 +10,7 @@ modelo = "gpt-4"
 
 codificador = tiktoken.encoding_for_model(modelo)
 
+
 def carrega(nome_do_arquivo):
     try:
         with open(nome_do_arquivo, "r") as arquivo:
@@ -17,6 +18,7 @@ def carrega(nome_do_arquivo):
             return dados
     except IOError as e:
         print(f"Erro: {e}")
+
 
 prompt_sistema = """
 Identifique o perfil de compra para cada cliente a seguir.
@@ -39,18 +41,18 @@ if numero_de_tokens >= 4096 - tamanho_esperado_saida:
 print(f"Modelo escolhido: {modelo}")
 
 lista_mensagens = [
-        {
-            "role": "system",
-            "content": prompt_sistema
-        },
-        {
-            "role": "user",
-            "content": prompt_usuario
-        }
-    ]
+    {
+        "role": "system",
+        "content": prompt_sistema
+    },
+    {
+        "role": "user",
+        "content": prompt_usuario
+    }
+]
 
 resposta = client.chat.completions.create(
-    messages = lista_mensagens,
+    messages=lista_mensagens,
     model=modelo
 )
 
