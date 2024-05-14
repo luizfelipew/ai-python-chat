@@ -6,6 +6,7 @@ load_dotenv()
 cliente = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 modelo = "gpt-4"
 
+
 def categoriza_produto(nome_produto, lista_categoria_possiveis):
     prompt_sistema = f"""
             Você é um categorizador de produtos.
@@ -24,22 +25,23 @@ def categoriza_produto(nome_produto, lista_categoria_possiveis):
         """
 
     resposta = cliente.chat.completions.create(
-        messages = [
+        messages=[
             {
-                "role":"system",
+                "role": "system",
                 "content": prompt_sistema
             },
             {
-                "role" : "user",
-                "content" : nome_produto
+                "role": "user",
+                "content": nome_produto
             }
         ],
-        model = modelo,
-        temperature = 0,
-        max_tokens = 200
+        model=modelo,
+        temperature=0,
+        max_tokens=200
     )
-    
+
     return resposta.choices[0].message.content
+
 
 categorias_validas = input("Informe as categorias válidas, separando por vírgula: ")
 
@@ -47,4 +49,3 @@ while True:
     nome_produto = input("Digite o nome do produto: ")
     texto_resposta = categoriza_produto(nome_produto, categorias_validas)
     print(texto_resposta)
-    
