@@ -43,7 +43,7 @@ def analisador_sentimentos(produto):
     """
 
     prompt_usuario = carrega(f"../dados/avaliacoes-{produto}.txt")
-    print(f"Inicou a análise de sentimentos do produto {produto}")
+    print(f"Iniciou a análise de sentimentos do produto {produto}")
 
     lista_mensagens = [
         {
@@ -72,4 +72,6 @@ def analisador_sentimentos(produto):
         print(f"Erro de API: {ex}")
 
 
-analisador_sentimentos("Boia inflável para piscina")
+lista_de_produtos = ["Tabuleiro de xadrez de madeira", "Tapete de yoga", "Boia inflável para piscina"]
+for um_produto in lista_de_produtos:
+    analisador_sentimentos(um_produto)
