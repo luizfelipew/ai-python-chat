@@ -1,6 +1,7 @@
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+import openai
 
 load_dotenv()
 
@@ -55,14 +56,20 @@ def analisador_sentimentos(produto):
         }
     ]
 
-    resposta = cliente.chat.completions.create(
-        messages=lista_mensagens,
-        model=modelo
-    )
+    try:
+        resposta = cliente.chat.completions.create(
+            messages=lista_mensagens,
+            model=modelo
+        )
 
-    texto_resposta = resposta.choices[0].message.content
+        texto_resposta = resposta.choices[0].message.content
 
-    salva(f"../dados/analise-{produto}.txt", texto_resposta)
+        salva(f"../dados/analise-{produto}.txt", texto_resposta)
+
+    except openai.AuthenticationError as ex:
+        print(f"Erro de Autenticação: {ex}")
+    except openai.APIError as ex:
+        print(f"Erro de API: {ex}")
 
 
 analisador_sentimentos("Boia inflável para piscina")
